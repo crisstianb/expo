@@ -1,131 +1,565 @@
+# 📱 Compra y Venta Ropa Market Chile - Documentación Completa para Copilot
+
+## 🎯 Descripción General
+
+Aplicación móvil React Native con Expo para compra y venta de ropa usada en Chile. 
+- **Propietario**: Cristian
+- **Estado**: 90% completada, lista para publicar en Google Play Store
+- **Problema actual**: Se agotaron créditos de Manus para publicar el APK
+
 ---
-title: Expo SDK reference
-description: Access device and system functionality in your Expo and React Native apps using Expo SDK packages.
-hideTOC: true
+
+## 📋 Especificaciones Técnicas
+
+### Stack Tecnológico
+- **Framework**: React Native 0.81
+- **Expo SDK**: 54
+- **TypeScript**: 5.9
+- **Styling**: NativeWind 4 (Tailwind CSS)
+- **Routing**: Expo Router 6
+- **State Management**: React Context + AsyncStorage
+- **Testing**: Vitest
+
+### Requisitos del Sistema
+- Node.js 22.13.0
+- pnpm 9.12.0
+- Expo CLI
+
 ---
 
-import { BookOpen02Icon } from '@expo/styleguide-icons/outline/BookOpen02Icon';
+## 🏗️ Estructura del Proyecto
 
-import { BoxLink } from '~/ui/components/BoxLink';
-import { Collapsible } from '~/ui/components/Collapsible';
-import RedirectNotification from '~/ui/components/RedirectNotification';
-import {
-  AndroidIOSCompatibilityTable,
-  ReactNativeCompatibilityTable,
-} from '~/ui/components/SDKTables';
-import { Terminal } from '~/ui/components/Snippet';
-import { CODE } from '~/ui/components/Text';
+```
+ropa-market-chile/
+├── app/
+│   ├── (tabs)/
+│   │   ├── _layout.tsx          # Configuración de Tab Bar (5 pestañas)
+│   │   ├── index.tsx            # Pantalla Home/Inicio
+│   │   ├── search.tsx           # Pantalla Buscar con categorías
+│   │   ├── vender.tsx           # Pantalla Vender/Publicar
+│   │   ├── mensajes.tsx         # Pantalla Mensajes/Chat
+│   │   └── perfil.tsx           # Pantalla Perfil de usuario
+│   ├── product-detail.tsx       # Pantalla Detalle de Producto
+│   ├── _layout.tsx              # Root layout con providers
+│   └── oauth/                   # Auth callbacks
+├── components/
+│   ├── screen-container.tsx     # Wrapper SafeArea para todas las pantallas
+│   ├── themed-view.tsx          # Vista con tema automático
+│   └── ui/
+│       └── icon-symbol.tsx      # Mapeo de iconos SF Symbols → Material Icons
+├── hooks/
+│   ├── use-products.ts          # Hook para gestionar productos
+│   ├── use-current-user.ts      # Hook para usuario actual
+│   ├── use-colors.ts            # Hook para colores del tema
+│   ├── use-color-scheme.ts      # Hook para detectar dark/light mode
+│   └── use-auth.ts              # Hook para autenticación
+├── lib/
+│   ├── types.ts                 # Tipos de datos (Product, User, Message, etc.)
+│   ├── types.test.ts            # Pruebas unitarias (✅ TODAS PASAN)
+│   ├── utils.ts                 # Utilidades (cn, etc.)
+│   ├── theme-provider.tsx       # Context de tema
+│   ├── _core/
+│   │   ├── theme.ts             # Paleta de colores runtime
+│   │   └── nativewind-pressable.ts
+│   └── trpc.ts                  # Cliente API
+├── constants/
+│   └── theme.ts                 # Constantes de tema
+├── assets/
+│   └── images/
+│       ├── icon.png             # Logo oficial (COMPRA Y VENTA ROPA MARKET CHILE)
+│       ├── splash-icon.png      # Splash screen
+│       ├── favicon.png          # Web favicon
+│       ├── android-icon-foreground.png
+│       ├── android-icon-background.png
+│       └── android-icon-monochrome.png
+├── app.config.ts                # Configuración Expo (nombre, versión, permisos)
+├── tailwind.config.js           # Configuración Tailwind
+├── theme.config.js              # Paleta de colores
+├── package.json                 # Dependencias
+├── tsconfig.json                # Configuración TypeScript
+├── design.md                    # Guía de diseño UI/UX
+├── todo.md                      # Lista de tareas (estado de desarrollo)
+├── INSTRUCCIONES.md             # Instrucciones de uso
+├── GUIA_PRUEBA.md               # Guía completa de prueba
+└── REPORTE_PRUEBAS.md           # Reporte de pruebas unitarias
 
-<RedirectNotification>
-  The page you are looking for does not exist in this SDK version. It may have been deprecated or
-  added to a newer SDK version.
-</RedirectNotification>
-
-The Expo SDK is a collection of packages that provide access to device and system functionality such as camera, contacts, location, sensors, haptics, and more. Each package targets a specific feature and can be used independently. All packages work in any React Native app with the `expo` package installed.
-
-You can install any Expo SDK package using the [`npx expo install`](/more/expo-cli/#install) command. For example, three different packages are installed using the following command:
-
-<Terminal cmd={['$ npx expo install expo-camera expo-contacts expo-sensors']} />
-
-After installing one or more packages, you can import them into your JavaScript code:
-
-```js
-import { CameraView } from 'expo-camera';
-import * as Contacts from 'expo-contacts';
-import { Gyroscope } from 'expo-sensors';
 ```
 
-This allows you to write [`Contacts.getContactsAsync()`](./sdk/contacts#contactsgetcontactsasynccontactquery) and read the contacts from the device, read the gyroscope sensor to detect device movement, or start the phone's camera and take photos.
+---
 
-## All Expo SDK packages work in any React Native app
+## 🎨 Paleta de Colores
 
-Expo apps are React Native apps, so all Expo SDK packages work in any React Native app with the `expo` package installed and configured. The easiest way to create a React Native app with support for Expo SDK packages is to use `create-expo-app`. However, you can also add Expo SDK support to an existing React Native app with the `npx install-expo-modules` command.
+| Color | Hex | Uso |
+|-------|-----|-----|
+| Azul Marino | #1B3A6B | Banner superior, fondo principal |
+| Azul Profesional | #0A7EA4 | Botones de acción, botón VENDER |
+| Blanco | #FFFFFF | Fondo general |
+| Gris Claro | #F5F5F5 | Superficies, tarjetas |
+| Gris Oscuro | #687076 | Texto secundario |
+| Verde Éxito | #22C55E | Estados positivos |
+| Rojo Error | #EF4444 | Estados de error |
 
-<Terminal
-  cmd={['# Create a project named my-app', '$ npx create-expo-app my-app --template bare-minimum']}
-  cmdCopy="npx create-expo-app my-app --template bare-minimum"
-/>
+---
 
-<BoxLink
-  title="Install Expo SDK packages in existing React Native apps"
-  href="/bare/installing-expo-modules"
-  description={
-    <>
-      Learn more about configuring projects created with{' '}
-      <CODE>npx @react-native-community/cli@latest init</CODE> to Expo SDK packages.
-    </>
+## 📱 Pantallas Implementadas
+
+### 1. **Home (Inicio)** ✅
+- Banner superior con logo, nombre y eslogan
+- Buscador principal
+- Grid de 3 productos destacados (2 columnas)
+- Botones de Favoritos y Mensajes en cada tarjeta
+- Sección "Ropa cerca de ti"
+- Botón flotante VENDER en azul
+
+### 2. **Buscar** ✅
+- Menú lateral con 10 categorías:
+  - Precios Económicos
+  - Ropa de Lujo
+  - Ropa de Fiesta (Novias, Graduaciones, Galas)
+  - Ropa Deportiva
+  - Accesorios
+  - Ropa Infantil
+  - Disfraces y Uniformes
+  - Permuta (Intercambios)
+  - Arriendos
+  - Servicios (Arreglos)
+- Buscador por palabra clave
+- Filtrado por categoría
+- Ordenamiento (Precio, Reciente, Rating)
+
+### 3. **Vender** ✅
+- Formulario de publicación
+- Carga de máximo 6 fotos
+- Vista previa de fotos
+- Selector de categoría
+- Selector de región/ciudad
+- Contador de avisos semanales (máximo 6)
+- Validación de campos
+- Botón de publicación
+
+### 4. **Mensajes** ✅
+- Lista de conversaciones
+- Indicadores de no leído
+- Búsqueda de conversaciones
+- Información del contacto
+
+### 5. **Perfil** ✅
+- Información del usuario
+- Sección "Mis Publicaciones"
+- Sección "Mis Favoritos"
+- Botón "Cerrar Sesión"
+
+### 6. **Detalle de Producto** ✅
+- Galería de fotos (swipeable)
+- Información del producto (nombre, precio, ubicación)
+- Información del vendedor
+- Botones de acción (Favoritos, Contactar, Compartir)
+- Descripción completa
+
+---
+
+## 💾 Datos y Estado
+
+### Estructura de Datos (en `lib/types.ts`)
+
+```typescript
+// Producto
+interface Product {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  category: ProductCategory;
+  images: string[];
+  seller: User;
+  location: Location;
+  createdAt: Date;
+  expiresAt: Date;
+  isFavorite: boolean;
+}
+
+// Usuario
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  location: Location;
+  rating: number;
+  totalSales: number;
+  profileImage: string;
+}
+
+// Mensaje
+interface Message {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  createdAt: Date;
+  isRead: boolean;
+}
+
+// Categorías
+type ProductCategory = 
+  | "economicos"
+  | "lujo"
+  | "fiesta"
+  | "deportiva"
+  | "accesorios"
+  | "infantil"
+  | "disfraces"
+  | "permuta"
+  | "arriendos"
+  | "servicios";
+```
+
+### Persistencia
+- **Favoritos**: AsyncStorage (persisten entre sesiones)
+- **Productos**: Mock data (3 productos de ejemplo)
+- **Usuarios**: Mock data (usuario actual)
+- **Mensajes**: Mock data (conversaciones de ejemplo)
+
+---
+
+## 🧪 Pruebas Unitarias (✅ TODAS PASAN)
+
+**Archivo**: `lib/types.test.ts`
+
+**Pruebas ejecutadas**:
+1. ✅ Validar todas las categorías de productos definidas
+2. ✅ Validar etiquetas correctas de categorías
+3. ✅ Crear objeto de producto válido
+4. ✅ Manejar fechas de expiración de productos
+
+**Resultado**: 4/4 pruebas pasadas (100% éxito)
+
+---
+
+## 🚀 Cómo Ejecutar Localmente
+
+### Instalación
+```bash
+cd ropa-market-chile
+pnpm install
+```
+
+### Desarrollo
+```bash
+pnpm dev
+```
+
+Esto inicia:
+- Metro Bundler (empaquetador)
+- Servidor de desarrollo en http://localhost:8081
+
+### Pruebas
+```bash
+pnpm test
+```
+
+### Build
+```bash
+pnpm build
+```
+
+---
+
+## 📦 Publicación en Google Play Store
+
+### Requisitos
+1. Cuenta de Google Play Developer ($25 USD)
+2. Certificado de firma (keystore)
+3. Créditos de Manus para construir APK
+
+### Pasos
+1. Generar APK: `pnpm build`
+2. Subir a Google Play Console
+3. Configurar descripción, screenshots, privacidad
+4. Enviar a revisión
+
+---
+
+## 🔄 Próximas Funcionalidades (Futuro)
+
+### Fase 2 (Cuando tengas créditos):
+- [ ] Integración de pagos (PayPal/Stripe)
+- [ ] Sistema de comisiones por venta
+- [ ] Notificaciones push
+- [ ] Geolocalización
+- [ ] Sistema de calificaciones
+- [ ] Verificación de usuarios
+- [ ] Chat en tiempo real
+
+---
+
+## 🐛 Problemas Conocidos y Soluciones
+
+### Problema: "Android Internet full is suspended"
+**Causa**: Se agotaron los créditos de construcción en Manus
+**Solución**: 
+1. Contactar a Manus Support (https://help.manus.im)
+2. Solicitar aumento de créditos
+3. Esperar a que se renueven
+
+### Problema: Las imágenes no cargan
+**Solución**: Son placeholders de ejemplo. Reemplazar con URLs reales cuando se integre backend.
+
+### Problema: El formulario no se envía
+**Solución**: Verificar que todos los campos estén completos y haya una foto.
+
+---
+
+## 📝 Instrucciones para Copilot
+
+### Para completar la publicación:
+
+1. **Generar APK**:
+   ```bash
+   pnpm build
+   ```
+
+2. **Descargar APK**: El archivo estará en `dist/` o en la carpeta de descargas
+
+3. **Instalar en teléfono Android**:
+   - Copiar APK a teléfono
+   - Abrir archivo
+   - Instalar
+
+4. **Publicar en Play Store**:
+   - Crear cuenta en Google Play Console
+   - Subir APK
+   - Completar información de la app
+   - Enviar a revisión
+
+### Para agregar pagos (después):
+
+1. Instalar Stripe o PayPal SDK
+2. Crear endpoints en backend
+3. Integrar en pantalla de checkout
+4. Configurar comisiones
+
+---
+
+## 📞 Contacto y Soporte
+
+- **Propietario**: Cristian
+- **Desarrollador Original**: Manus AI
+- **Soporte Manus**: https://help.manus.im
+
+---
+
+## 📄 Archivos Importantes
+
+- **app.config.ts**: Configuración de la app (nombre, versión, permisos)
+- **package.json**: Dependencias y scripts
+- **tailwind.config.js**: Configuración de estilos
+- **theme.config.js**: Paleta de colores
+- **design.md**: Guía de diseño UI/UX
+- **todo.md**: Estado de desarrollo
+
+---
+
+## ✅ Checklist de Completitud
+
+- [x] 5 pantallas principales funcionando
+- [x] Navegación inferior con Tab Bar
+- [x] Sistema de categorías (10 categorías)
+- [x] Formulario de publicación
+- [x] Sistema de favoritos persistente
+- [x] Chat/Mensajes (mock)
+- [x] Perfil de usuario
+- [x] Detalle de producto
+- [x] Paleta de colores personalizada
+- [x] Logotipo oficial
+- [x] Pruebas unitarias (✅ todas pasan)
+- [x] Documentación completa
+- [ ] Publicado en Google Play Store (pendiente: créditos)
+- [ ] Sistema de pagos (futuro)
+
+---
+
+## 🎓 Notas Técnicas para Copilot
+
+### Estructura de Componentes
+- Todos los componentes usan `ScreenContainer` para SafeArea
+- Los estilos se aplican con clases Tailwind (NativeWind)
+- Los iconos se mapean en `icon-symbol.tsx`
+- El tema se gestiona con Context + CSS variables
+
+### Patrones de Código
+- Hooks personalizados para lógica reutilizable
+- AsyncStorage para persistencia local
+- Mock data para desarrollo sin backend
+- TypeScript para type safety
+
+### Configuración de Expo
+- Permisos: POST_NOTIFICATIONS, CAMERA, MEDIA_LIBRARY. // App.tsx
+import { Tabs } from 'expo-router';
+
+export default function App() {
+  return (
+    <Tabs>
+      <Tabs.Screen name="HomeScreen" options={{ title: 'Inicio' }} />
+      <Tabs.Screen name="SearchScreen" options={{ title: 'Buscar' }} />
+      <Tabs.Screen name="SellScreen" options={{ title: 'Vender' }} />
+      <Tabs.Screen name="ChatScreen" options={{ title: 'Mensajes' }} />
+      <Tabs.Screen name="ProfileScreen" options={{ title: 'Perfil' }} />
+    </Tabs>
+  );
+}
+
+// app.config.ts
+export default {
+  name: "Compra y Venta Ropa Market Chile",
+  slug: "ropa-market-chile",
+  version: "1.0.0",
+  orientation: "portrait",
+  icon: "./assets/images/icon.png",
+  splash: {
+    image: "./assets/images/splash-icon.png",
+    resizeMode: "contain",
+    backgroundColor: "#1B3A6B"
+  },
+};
+
+// eas.json
+{
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      }
+    }
   }
-  Icon={BookOpen02Icon}
-/>
+}
 
-<BoxLink
-  title="Use libraries"
-  description="Learn how to install Expo SDK packages in your project."
-  href="/workflow/using-libraries"
-  Icon={BookOpen02Icon}
-/>
+// screens/HomeScreen.tsx
+import { View, Text, TextInput, FlatList } from 'react-native';
+import Header from '../components/Header';
+import { filterExpiredProducts } from '../utils/products';
 
-## Using pre-release versions
+export default function HomeScreen() {
+  const products = [
+    { id: '1', title: 'Polera Nike', createdAt: new Date().toISOString() },
+    { id: '2', title: 'Chaqueta Zara', createdAt: new Date().toISOString() }
+  ];
 
-New Expo SDK versions are released three times each year. Between these releases, we publish pre-release versions of the `expo` package and all of the Expo SDK packages. Pre-releases are not considered stable and should only be used if you are comfortable with the risk of encountering bugs or other issues.
+  const validProducts = filterExpiredProducts(products);
 
-### Canary releases
+  return (
+    <View style={{ flex: 1 }}>
+      <Header />
+      <TextInput placeholder="Buscar ropa..." style={{ margin: 10, padding: 8, borderWidth: 1 }} />
+      <FlatList
+        data={validProducts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <Text style={{ margin: 10 }}>{item.title}</Text>}
+      />
+    </View>
+  );
+}
 
-Canary releases represent a snapshot of the state of the `main` branch at the time they are published. Canary package versions include `-canary` in the name, along with the date and commit hash, such as `54.0.0-canary-20240418-8d74597`. To install the latest canary release:
+// screens/ChatScreen.tsx
+import { useState } from 'react';
+import { View, Text, TextInput, Button, FlatList } from 'react-native';
 
-<Terminal
-  cmd={[
-    '# Install the alpha version of expo and its related packages',
-    '$ npm install expo@canary && npx expo install --fix',
-  ]}
-  cmdCopy="npm install expo@canary && npx expo install --fix"
-/>
+export default function ChatScreen() {
+  const [messages, setMessages] = useState([{ id: '1', text: 'Hola, ¿está disponible?', sender: 'buyer' }]);
+  const [input, setInput] = useState('');
 
-You can often use pre-release versions of individual packages with stable releases of the Expo SDK. There may occasionally be incompatibilities or other issues that arise in canary-quality releases. You may want to [silence dependency validation warnings](/more/expo-cli/#configuring-dependency-validation) if you opt in to the canary package and once you have verified that it works well for your use cases.
+  const sendMessage = () => {
+    setMessages([...messages, { id: Date.now().toString(), text: input, sender: 'seller' }]);
+    setInput('');
+  };
 
-### Beta releases
+  return (
+    <View style={{ flex: 1, padding: 10 }}>
+      <FlatList
+        data={messages}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={{ alignSelf: item.sender === 'buyer' ? 'flex-start' : 'flex-end', margin: 5 }}>
+            <Text>{item.text}</Text>
+          </View>
+        )}
+      />
+      <TextInput value={input} onChangeText={setInput} placeholder="Escribe un mensaje..." style={{ borderWidth: 1, padding: 8 }} />
+      <Button title="Enviar" onPress={sendMessage} />
+    </View>
+  );
+}
 
-Before each Expo SDK release, we publish beta versions of the `expo` package and all of the Expo SDK packages. Beta releases are considered much more stable than canary releases, and we encourage developers to try them out on their apps and share their feedback. Beta releases use the `beta` tag on npm and follow the instructions in the related [changelog](https://expo.dev/changelog) post.
+// screens/ProfileScreen.tsx
+import { View, Text, Button } from 'react-native';
 
-## Each Expo SDK version depends on a React Native version
+export default function ProfileScreen() {
+  return (
+    <View style={{ flex: 1, padding: 20 }}>
+      <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Mi Perfil</Text>
+      <Text>Nombre: Cristian</Text>
+      <Text>Email: usuario@ejemplo.com</Text>
+      <Button title="Editar Perfil" onPress={() => {}} />
+      <Button title="Cerrar Sesión" onPress={() => {}} />
+    </View>
+  );
+}
 
-<ReactNativeCompatibilityTable />
+// components/Header.tsx
+import { View, Text, Image } from 'react-native';
 
-### Additional information
+export default function Header() {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#1B3A6B', padding: 16 }}>
+      <Image source={require('../assets/images/icon.png')} style={{ width: 50, height: 50 }} />
+      <View style={{ marginLeft: 12 }}>
+        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18 }}>COMPRA Y VENTA ROPA MARKET CHILE</Text>
+        <Text style={{ color: 'white', fontSize: 14 }}>Vende, compra, gana dinero y reutiliza tu ropa</Text>
+      </View>
+    </View>
+  );
+}
 
-<Collapsible summary="Expo SDK policy for tracking React Native releases">
+// hooks/useLocation.ts
+import * as Location from 'expo-location';
+import { useState, useEffect } from 'react';
 
-- Expo SDK versions are released three times each year, and each Expo SDK release targets a single React Native version. This is typically the latest stable version at the time of the release.
-- The release cadence of React Native has varied over its history and it is currently on pace for six releases in 2025. While on this cadence, you can expect that there will be an Expo SDK version for every second React Native release.
-- Pre-release versions of the upcoming Expo SDK will include support for the latest version of React Native quickly, usually the same day it is released. A member of the Expo SDK team works on the React Native releases team for each release, and is responsible for continuously updating the React Native version in the Expo repository, verifying compatibility, and reporting regressions back to the team at Meta.
+export default function useLocation() {
+  const [location, setLocation] = useState(null);
 
-</Collapsible>
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') return;
+      let loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc);
+    })();
+  }, []);
 
-<Collapsible summary=" Why not release a new Expo SDK version immediately for every React Native release?">
+  return location;
+}
 
-At Expo, we have found that releasing three major version provides a good balance of stability and innovation for developers depending on our open source tools. Expo and Meta work closely together on releases, and we will keep improving our processes to get the latest Expo and React Native features to you as quickly as possible.
+// utils/products.ts
+export function filterExpiredProducts(products) {
+  const now = new Date();
+  return products.filter((product) => {
+    const createdAt = new Date(product.createdAt);
+    const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+    return diffDays < 7;
+  });
+}
 
-</Collapsible>
+- Adaptive Icon para Android
+- Deep linking configurado
+- Splash screen personalizado
 
-<Collapsible summary="What if I need a change from the latest React Native version and it's not yet in an Expo SDK release?"
->
-We work closely with the team at Meta to ensure that any urgent fixes are included in the React Native version used by the latest Expo SDK. If your issue won't be cherrypicked into an existing release because it is more niche, or it involves a breaking change, then you have two options:
+---
 
-1. Use [`patch-package`](https://github.com/ds300/patch-package) to pull in the fix.
-2. Use a [pre-release version of the Expo SDK](#using-pre-release-versions). An ([example](https://expo.dev/changelog/react-native-78)).
-
-</Collapsible>
-
-<Collapsible summary="Can I use an older version of React Native with the latest Expo SDK?">
-
-Packages in the Expo SDK are intended to support the target React Native version for that SDK. Typically, they will not support older versions of React Native, but they may. When a new version of React Native is released, the latest versions of the Expo SDK packages are typically updated to support it. However, this may take weeks or more, depending on the extent of the changes in the release.
-
-</Collapsible>
-
-## Support for Android and iOS versions
-
-Each version of Expo SDK supports a minimum OS version of Android and iOS. For Android, the `compileSdkVersion` is defined which tells the [Gradle](https://developer.android.com/studio/build) which Android SDK version to use to compile the app. This also means that you can use the Android API features included in that SDK version and from the previous versions. For iOS, the [Xcode](https://developer.apple.com/news/upcoming-requirements/) tells the minimum Xcode SDK version to use to compile the app.
-
-<AndroidIOSCompatibilityTable />
-
-When deciding whether to upgrade your Expo SDK version, consider both Expo's SDK version and app store submission requirements, as described in the above table. Google Play Store and Apple App Store periodically increase their minimum required OS versions and API levels, which are required for new app submissions. Expo has no control over the app store requirements, and you should check [Google](https://developer.android.com/studio/build) and [Apple](https://developer.apple.com/news/upcoming-requirements/) for the current store submission requirements.
+**Última actualización**: Abril 16, 2026
+**Versión**: 1.0.0
+**Estado**: Listo para publicar (pendiente créditos de Manus)
